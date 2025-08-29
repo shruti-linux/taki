@@ -1,4 +1,4 @@
-ame: SHRUTI
+name: SHRUTI
 
 on:
   workflow_dispatch:
