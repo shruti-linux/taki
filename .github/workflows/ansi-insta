@@ -1,10 +1,12 @@
+name: ansi-install
+
 on:
   workflow_dispatch:
 
 jobs:
-  install-ansible:
-    name: Install Ansible
-    runs-on: [ self-hosted ]
+  deploy:
+    runs-on: self-hosted
+
 
     steps:
       - name: Show system info
