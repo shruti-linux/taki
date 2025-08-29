@@ -1,1 +1,83 @@
+ame: SHRUTI
 
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    env:
+      #TF_VAR_project_id:        "ansi-465711"
+      #TF_VAR_credentials_file:  "/home/shruti/ansi-terra/actions-runner/_work/ansibleterraformpieline-/ansibleterraformpieline-/terraform-ansible/sa.json"
+      TF_VAR_public_key_path:   "/home/shruti/.ssh/id_rsa.pub"
+
+    defaults:
+      run:
+        working-directory: /home/shruti/ansi-terra   # all steps use this folder
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create ansible.cfg with host_key_checking disabled
+        run: |
+          set -euo pipefail
+          cat > ansible.cfg <<EOF
+          [defaults]
+          host_key_checking = False
+          EOF
+
+      - name: Terraform Init
+     
+        run: |
+            cd /home/shruti/ansi-terra/abc
+            terraform init
+            terraform apply --auto-approve
+            terraform output external_ip  > ip.txt
+            echo "" >> ip.txt 
+
+         
+    
+         
+      
+      - name: Prepare Ansible inventory
+        run: |
+          cd /home/shruti/ansi-terra/abc/
+          echo "[centos9]" > inventory
+          if [ -s ip.txt ]; then
+            while IFS= read -r ip; do
+              echo "$ip ansible_user=shrutikulshreshta ansible_ssh_private_key_file=home/shruti/.ssh/id_rsa ansible_python_interpreter=/usr/bin/python3 ansible_become=true" >> inventory
+            done < ip.txt
+          else
+            echo "ip.txt is empty!"
+          fi
+  
+      - name: Wait up to 3 minutes for SSH
+        run: |
+          for ip in $(cat /home/shruti/ansi-terra/abc/ip.txt); do
+            echo "Waiting for SSH on $ip..."
+            timeout=60
+            waited=0
+            until ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa -q shrutikulshreshta@$ip 'echo ok' 2>/dev/null; do
+              sleep 5
+              waited=$((waited + 5))
+              echo "Still waiting for $ip... (${waited}s)"
+              if [ $waited -ge $timeout ]; then
+                echo "Timeout reached waiting for $ip"
+                exit 1
+              fi
+            done
+            echo "SSH is up on shrutikulshreshta@$ip"
+          done
+
+       
+      
+      - name: Run Ansible Playbook
+        run: |
+          cd /home/shruti/ansi-terra/abc
+          ansible-playbook -i inventory playbook1-adduser.yaml
+          
+   
+
+      
