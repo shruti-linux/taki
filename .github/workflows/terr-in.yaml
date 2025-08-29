@@ -22,9 +22,8 @@ jobs:
     - name: Install Terraform
       run: |
           sudo yum install -y yum-utils
-          sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
-          sudo yum -y install terraform
-          terraform --version
+          
+      
           sudo tee -a /etc/yum.repos.d/google-cloud-sdk.repo << EOM
             [google-cloud-cli]
             name=Google Cloud CLI
@@ -34,6 +33,8 @@ jobs:
             repo_gpgcheck=0
             gpgkey=https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
             EOM
+            sudo yum -y install terraform
+             terraform --version
 
 
 
