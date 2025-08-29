@@ -49,7 +49,7 @@ jobs:
   
       - name: Wait up to 3 minutes for SSH
         run: |
-          for ip in $(cat /home/shrutikulshreshta/ansi-terra/abc/ip.txt); do
+          for ip in $(cat /home/shrutikulshreshta/ip.txt); do
             echo "Waiting for SSH on $ip..."
             timeout=60
             waited=0
