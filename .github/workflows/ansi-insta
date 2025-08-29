@@ -4,7 +4,7 @@ on:
 jobs:
   install-ansible:
     name: Install Ansible
-    runs-on: [ self-hosted, ansible-master, linux ]
+    runs-on: [ self-hosted ]
 
     steps:
       - name: Show system info
