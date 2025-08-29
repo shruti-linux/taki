@@ -26,7 +26,7 @@ jobs:
           sudo sed -i 's/\$releasever/9/g' /etc/yum.repos.d/hashicorp.repo
           sudo yum clean all
           sudo yum makecache
-          sudo yum install terraform
+          sudo yum install terraform -y
           terraform --version
       
           
