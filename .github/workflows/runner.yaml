@@ -41,7 +41,7 @@ jobs:
           echo "[centos9]" > inventory
           if [ -s ip.txt ]; then
             while IFS= read -r ip; do
-              echo "$ip ansible_user=shrutikulshreshta host_key_checking = False become_method=true ansible_ssh_private_key_file=home/shruti/.ssh/id_rsa ansible_python_interpreter=/usr/bin/python3 ansible_become=true" >> inventory
+              echo "$ip ansible_user=shrutikulshreshta host_key_checking = False become_user=root become_method=sudo ansible_ssh_private_key_file=home/shruti/.ssh/id_rsa ansible_python_interpreter=/usr/bin/python3 ansible_become=true" >> inventory
             done < ip.txt
           else
             echo "ip.txt is empty!"
@@ -51,7 +51,7 @@ jobs:
         run: |
           for ip in $(cat /home/shrutikulshreshta/ip.txt); do
             echo "Waiting for SSH on $ip..."
-            timeout=60
+            timeout=180
             waited=0
             until ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa -q shrutikulshreshta@$ip 'echo ok' 2>/dev/null; do
               sleep 5
